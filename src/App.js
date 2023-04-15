@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState} from 'react';
+import React, { useState, useEffect } from 'react';
+
 import Checkbox from './components/Checkbox/Checkbox';
 import styled from 'styled-components';
 
@@ -41,9 +41,9 @@ const QuantityTextbox = styled.input`
 `;
 
 function App() {
-  const [web, setWebPage] = useState(false);
+  const [web, setWeb] = useState(false);
   const [seo, setSeo] = useState(false);
-  const [ads, setAdvertising] = useState(false);
+  const [ads, setAds] = useState(false);
   const [numPages, setNumPages] = useState(1);
   const [numLanguages, setNumLanguages] = useState(1);
   const [preuTotal, setPreuTotal] = useState(0);
@@ -53,13 +53,13 @@ function App() {
 
     switch (name) {
       case 'web':
-        setWebPage(checked);
+        setWeb(checked);
         break;
       case 'seo':
         setSeo(checked);
         break;
       case 'ads':
-        setAdvertising(checked);
+        setAds(checked);
         break;
       default:
         break;
@@ -94,10 +94,6 @@ function App() {
     }
   }
 
-  React.useEffect(() => {
-    calculateTotalPrice();
-  }, [web, seo, ads, numPages, numLanguages]);
-
   const calculateTotalPrice = () => {
     let total = 0;
     if (web) {
@@ -112,6 +108,46 @@ function App() {
     }
     setPreuTotal(total);
   }
+
+  useEffect(() => {
+    const storedWeb = localStorage.getItem('web');
+    const storedSeo = localStorage.getItem('seo');
+    const storedAds = localStorage.getItem('ads');
+    const storedNumPages = localStorage.getItem('numPages');
+    const storedNumLanguages = localStorage.getItem('numLanguages');
+
+    if (storedWeb) {
+      setWeb(storedWeb === 'true');
+    }
+    if (storedSeo) {
+      setSeo(storedSeo === 'true');
+    }
+    if (storedAds) {
+      setAds(storedAds === 'true');
+    }
+    if (storedNumPages) {
+      setNumPages(parseInt(storedNumPages));
+    }
+    if (storedNumLanguages) {
+      setNumLanguages(parseInt(storedNumLanguages));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('web', web);
+  }, [web]);
+
+  useEffect(() => {
+    localStorage.setItem('numPages', numPages);
+  }, [numPages]);
+
+  useEffect(() => {
+    localStorage.setItem('numLanguages', numLanguages);
+  }, [numLanguages]);
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [web, seo, ads, numPages, numLanguages]);
 
   return (
     <div className="App">
