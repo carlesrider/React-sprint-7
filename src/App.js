@@ -13,6 +13,33 @@ const Panel = styled.div`
   border-radius: 4px;
 `;
 
+// Styled-component per al component fet a mida amb botons d'incrementar i decrementar
+const QuantityInput = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const QuantityButton = styled.button`
+  padding: 0px;
+  margin: 5px;
+  background-color: darkorange;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 2rem;
+  line-height: 1;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+`;
+
+const QuantityTextbox = styled.input`
+  width: 40px;
+  height: 2rem;
+  border: none;
+  text-align: center;
+`;
+
 function App() {
   const [web, setWebPage] = useState(false);
   const [seo, setSeo] = useState(false);
@@ -47,6 +74,26 @@ function App() {
     setNumLanguages(parseInt(event.target.value));
   }
 
+  const handleNumPagesIncrement = () => {
+    setNumPages(numPages + 1);
+  }
+
+  const handleNumPagesDecrement = () => {
+    if (numPages > 1) {
+      setNumPages(numPages - 1);
+    }
+  }
+
+  const handleNumLanguagesIncrement = () => {
+    setNumLanguages(numLanguages + 1);
+  }
+
+  const handleNumLanguagesDecrement = () => {
+    if (numLanguages > 1) {
+      setNumLanguages(numLanguages - 1);
+    }
+  }
+
   React.useEffect(() => {
     calculateTotalPrice();
   }, [web, seo, ads, numPages, numLanguages]);
@@ -71,14 +118,18 @@ function App() {
       <p>Què vols fer?</p>
       <Checkbox name="web" text="Una pàgina web (500€)" checked={web} onChange={handleCheckboxChange}/>
       <Panel visible={web}>
-        <div>
+        <QuantityInput>
           <label htmlFor="numPages">Nombre de pàgines:</label>
-          <input type="number" id="numPages" name="numPages" value={numPages} onChange={handleNumPagesChange} min="1"/>
-        </div>
-        <div>
+          <QuantityButton onClick={handleNumPagesIncrement}>+</QuantityButton>
+          <QuantityTextbox type="number" id="numPages" name="numPages" value={numPages} onChange={handleNumPagesChange} />
+          <QuantityButton onClick={handleNumPagesDecrement}>-</QuantityButton>
+        </QuantityInput>
+        <QuantityInput>
           <label htmlFor="numLanguages">Nombre d'idiomes:</label>
-          <input type="number" id="numLanguages" name="numLanguages" value={numLanguages} onChange={handleNumLanguagesChange} min="1" />
-        </div>
+          <QuantityButton onClick={handleNumLanguagesIncrement}>+</QuantityButton>
+          <QuantityTextbox type="number" id="numLanguages" name="numLanguages" value={numLanguages} onChange={handleNumLanguagesChange} />
+          <QuantityButton onClick={handleNumLanguagesDecrement}>-</QuantityButton>
+        </QuantityInput>
       </Panel>
       <Checkbox name="seo" text="Una consultoria SEO (300€)" checked={seo} onChange={handleCheckboxChange}/>
       <Checkbox name="ads" text="Una campanya de Google Ads (200€)" checked={ads} onChange={handleCheckboxChange}/>
