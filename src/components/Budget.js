@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Checkbox from './Checkbox/Checkbox';
 import styled from 'styled-components';
+import HelpPopup from './HelpPopup';
 
 // Styled-component per al panell d'ajust de pàgines i idiomes
 const Panel = styled.div`
@@ -47,6 +48,7 @@ function Budget() {
   const [numPages, setNumPages] = useState(1);
   const [numLanguages, setNumLanguages] = useState(1);
   const [preuTotal, setPreuTotal] = useState(0);
+  const [showHelp, setShowHelp] = useState(false);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -159,12 +161,24 @@ function Budget() {
           <QuantityButton onClick={handleNumPagesIncrement}>+</QuantityButton>
           <QuantityTextbox type="number" id="numPages" name="numPages" value={numPages} onChange={handleNumPagesChange} />
           <QuantityButton onClick={handleNumPagesDecrement}>-</QuantityButton>
+          <HelpPopup 
+            text="Aquí pots indicar el número de págines totals que tindrà la teva web en cada idioma"
+            currentText="Ara mateix has seleccionat"
+            element="pàgines"
+            items={numPages} 
+            onClose={() => setShowHelp(false)} />
         </QuantityInput>
         <QuantityInput>
           <label htmlFor="numLanguages">Nombre d'idiomes:</label>
           <QuantityButton onClick={handleNumLanguagesIncrement}>+</QuantityButton>
           <QuantityTextbox type="number" id="numLanguages" name="numLanguages" value={numLanguages} onChange={handleNumLanguagesChange} />
           <QuantityButton onClick={handleNumLanguagesDecrement}>-</QuantityButton>
+          <HelpPopup 
+            text="Aquí pots indicar el número d'idiomes que tindrà la teva web"
+            currentText="Ara mateix has seleccionat"
+            element="idiomes"
+            items={numLanguages} 
+            onClose={() => setShowHelp(false)} />
         </QuantityInput>
       </Panel>
       <Checkbox name="seo" text="Una consultoria SEO (300€)" checked={seo} onChange={handleCheckboxChange}/>
