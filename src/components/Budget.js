@@ -49,6 +49,9 @@ function Budget() {
   const [numLanguages, setNumLanguages] = useState(1);
   const [preuTotal, setPreuTotal] = useState(0);
   const [showHelp, setShowHelp] = useState(false);
+  const [budgetName, setBudgetName] = useState('');
+  const [client, setClient] = useState('');
+  const [budgetList, setBudgetList] = useState([]);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -151,9 +154,49 @@ function Budget() {
     calculateTotalPrice();
   }, [web, seo, ads, numPages, numLanguages]);
 
+  useEffect(() => {
+    const savedBudgetList = JSON.parse(localStorage.getItem('budgetList')) || [];
+    setBudgetList(savedBudgetList);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('budgetList', JSON.stringify(budgetList));
+  }, [budgetList]);
+
+  const handleAddBudget = () => {
+    const newBudget = {
+      name: budgetName,
+      client: client,
+      web: web,
+      seo: seo,
+      ads: ads,
+      numPages: numPages,
+      numLanguages: numLanguages,
+      preuTotal: preuTotal,
+      date: new Date(),
+    };
+    setBudgetList([...budgetList, newBudget]);
+    setBudgetName('');
+    setClient('');
+    setNumPages(1);
+    setNumLanguages(1);
+    setWeb(false);
+    setSeo(false);
+    setAds(false);
+    setPreuTotal(0);
+  };
+
   return (
     <div className="App">
-      <p>Què vols fer?</p>
+      <div className='left-col'>
+      <h3>Crear pressupost</h3>
+      <label>
+        Nom de pressupost: <input type="text" name="budgetName" value={budgetName} onChange={e => setBudgetName(e.target.value)} />
+      </label>
+      <label>
+        Client: <input type="text" name="client" value={client} onChange={e => setClient(e.target.value)} />
+      </label>
+        
       <Checkbox name="web" text="Una pàgina web (500€)" checked={web} onChange={handleCheckboxChange}/>
       <Panel visible={web}>
         <QuantityInput>
@@ -184,6 +227,39 @@ function Budget() {
       <Checkbox name="seo" text="Una consultoria SEO (300€)" checked={seo} onChange={handleCheckboxChange}/>
       <Checkbox name="ads" text="Una campanya de Google Ads (200€)" checked={ads} onChange={handleCheckboxChange}/>
       <p>Preu: {preuTotal}€</p>
+      {preuTotal > 0 && budgetName && client && (
+        <button onClick={handleAddBudget} >Afegir pressupost</button>
+      )}
+      </div>
+      {budgetList.length > 0 && (
+        <div className='right-col'>
+          <h3>Pressupostos guardats</h3>
+          <ol>
+            {budgetList.map((budget) => (
+              <li key={budget.date.toString()}>
+                <h3>Pressupost: {budget.name} a nom de {budget.client}</h3>
+                <p>Data: {budget.date.toLocaleDateString('ca-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})}
+</p>
+                {budget.web && (
+                <p><strong>Pàgina Web</strong><br/>
+                  Número de págines: {budget.numPages}<br/>
+                  Número d'idiomes: {budget.numLanguages}
+                </p>
+                )}
+                {budget.seo && (
+                <p><strong>Consultoria SEO</strong></p>
+                )}
+                {budget.ads && (
+                <p><strong>Campanya Gogole Ads</strong></p>
+                )}
+                <h3>Preu total: {budget.preuTotal}€</h3>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+      
+
     </div>
   );
 }
